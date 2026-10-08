@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <style>
+    *{box-sizing:border-box}body{font-family:Arial,sans-serif;margin:0;background:#f8fafc;color:#0f172a}.top{background:#172554;color:#fff;padding:14px 16px}.title{font-size:18px;font-weight:700}.sub{font-size:11px;opacity:.8;margin-top:3px}.tabs{display:flex;gap:6px;padding:10px;background:#fff;border-bottom:1px solid #e2e8f0;position:sticky;top:0;z-index:3}.tab{border:0;background:#eef2ff;border-radius:8px;padding:7px 9px;font-size:11px;cursor:pointer}.tab.active{background:#2563eb;color:#fff}.panel{display:none;padding:14px}.panel.active{display:block}.card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:13px;margin-bottom:12px;box-shadow:0 1px 3px rgba(15,23,42,.05)}label{display:block;font-size:11px;font-weight:700;margin:9px 0 4px;color:#475569}input,select,textarea{width:100%;border:1px solid #cbd5e1;border-radius:8px;padding:9px;font-size:12px;background:#fff}textarea{min-height:70px;resize:vertical}.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}.btn{width:100%;border:0;border-radius:9px;padding:10px;margin-top:12px;background:#2563eb;color:#fff;font-weight:700;cursor:pointer}.btn.secondary{background:#e2e8f0;color:#0f172a}.btn.green{background:#16a34a}.btn.red{background:#dc2626}.msg{margin-top:9px;padding:9px;border-radius:8px;font-size:11px;display:none}.msg.ok{display:block;background:#dcfce7;color:#166534}.msg.warn{display:block;background:#fef9c3;color:#854d0e}.msg.err{display:block;background:#fee2e2;color:#991b1b}.metric{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f1f5f9;font-size:12px}.big{font-size:30px;font-weight:800;text-align:center;margin:10px 0}.timer{font-size:44px;text-align:center;font-weight:800;color:#172554;padding:16px}.timer-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.small{font-size:10px;color:#64748b}.check{display:flex;align-items:center;gap:6px;font-size:11px;margin-top:8px}.check input{width:auto}.loading{font-size:11px;color:#64748b;margin-top:8px}
+  </style>
+</head>
+<body>
+  <div class="top"><div class="title">🚀 Rizvi Task Hub</div><div class="sub">Productivity + Money Control</div></div>
+  <div class="tabs">
+    <button class="tab active" onclick="tab('task',this)">Task</button>
+    <button class="tab" onclick="tab('money',this)">Money</button>
+    <button class="tab" onclick="tab('goal',this)">Goals</button>
+    <button class="tab" onclick="tab('timer',this)">Focus</button>
+    <button class="tab" onclick="tab('review',this)">Review</button>
+  </div>
+
+  <section id="task" class="panel active">
+    <div class="card">
+      <b>➕ Add Task</b>
+      <label>Task</label><input id="taskName" placeholder="What needs to be done?">
+      <div class="row"><div><label>Type</label><select id="taskType"><option>BIG</option><option>SMALL</option></select></div><div><label>Priority</label><select id="priority"><option>Critical</option><option>High</option><option selected>Medium</option><option>Low</option></select></div></div>
+      <div class="row"><div><label>Project</label><select id="project"><option>Personal</option><option>DiaFit</option><option>Tenova</option><option>Divine Cloth</option><option>Quicon</option></select></div><div><label>Due Date</label><input id="dueDate" type="date"></div></div>
+      <div class="row"><div><label>Start</label><input id="startTime" type="time"></div><div><label>End</label><input id="endTime" type="time"></div></div>
+      <div class="row"><div><label>Estimated minutes</label><input id="estMinutes" type="number" min="0" placeholder="60"></div><div><label>Impact 0–5</label><input id="impact" type="number" min="0" max="5" value="0"></div></div>
+      <div class="row"><div><label>Urgency 0–5</label><input id="urgency" type="number" min="0" max="5" value="0"></div><div><label>Revenue 0–5</label><input id="revenue" type="number" min="0" max="5" value="0"></div></div>
+      <label>Notes</label><textarea id="taskNotes" placeholder="Optional"></textarea>
+      <label class="check"><input id="calendar" type="checkbox" checked> Add/sync to Google Calendar when time is provided</label>
+      <button class="btn" onclick="saveTask()">Save Task</button><div id="taskMsg" class="msg"></div>
+    </div>
+    <div class="card"><b>🔥 Today</b><div id="todaySummary" class="loading">Loading...</div><button class="btn secondary" onclick="refreshToday()">Refresh</button></div>
+  </section>
+
+  <section id="money" class="panel">
+    <div class="card"><b>💰 Add Expense</b>
+      <label>Date</label><input id="expDate" type="date">
+      <div class="row"><div><label>Category</label><select id="expCategory"><option>Food</option><option>Transport</option><option>Bills</option></select></div><div><label>Amount</label><input id="expAmount" type="number" min="0" step="0.01"></div></div>
+      <label>Description</label><input id="expDescription" placeholder="Lunch, bus, bill...">
+      <div class="row"><div><label>Payment</label><select id="payment"><option>Cash</option><option>bKash</option><option>Nagad</option><option>Card</option><option>Bank</option><option>Other</option></select></div><div><label>Need / Want</label><select id="needWant"><option>Need</option><option>Want</option></select></div></div>
+      <label>Project</label><select id="expProject"><option>Personal</option><option>DiaFit</option><option>Tenova</option><option>Divine Cloth</option><option>Quicon</option></select>
+      <button class="btn green" onclick="saveExpense(false)">Save Expense</button><div id="expMsg" class="msg"></div>
+    </div>
+    <div class="card"><b>💵 Add Income</b>
+      <label>Date</label><input id="incDate" type="date">
+      <label>Source</label><input id="incSource" placeholder="Salary, freelance, business...">
+      <label>Amount</label><input id="incAmount" type="number" min="0" step="0.01">
+      <label>Description</label><input id="incDescription">
+      <button class="btn" onclick="saveIncome()">Save Income</button><div id="incMsg" class="msg"></div>
+    </div>
+    <div class="card"><b>📊 Current Month</b><div id="moneySummary" class="loading">Loading...</div></div>
+  </section>
+
+  <section id="goal" class="panel">
+    <div class="card"><b>🎯 Add Goal</b>
+      <label>Goal</label><input id="goalName" placeholder="Example: Save 1000 BDT">
+      <div class="row"><div><label>Type</label><select id="goalType"><option>General</option><option>Business</option><option>Personal</option><option>Savings</option></select></div><div><label>Target</label><input id="goalTarget" type="number" min="0"></div></div>
+      <div class="row"><div><label>Current</label><input id="goalCurrent" type="number" min="0" value="0"></div><div><label>Unit</label><input id="goalUnit" placeholder="BDT / tasks / %"></div></div>
+      <label>Deadline</label><input id="goalDeadline" type="date">
+      <button class="btn" onclick="saveGoal()">Save Goal</button><div id="goalMsg" class="msg"></div>
+    </div>
+    <div class="card"><b>📅 Monthly Goal</b>
+      <label>Goal</label><input id="mgoalName" placeholder="October target">
+      <div class="row"><div><label>Target</label><input id="mgoalTarget" type="number"></div><div><label>Current</label><input id="mgoalCurrent" type="number" value="0"></div></div>
+      <label>Unit</label><input id="mgoalUnit" placeholder="tasks / BDT / hours">
+      <button class="btn secondary" onclick="saveMonthlyGoal()">Save Monthly Goal</button><div id="mgoalMsg" class="msg"></div>
+    </div>
+  </section>
+
+  <section id="timer" class="panel">
+    <div class="card"><b>⏱ Focus Timer</b><div class="small">Use this for deep work. When you finish, save the minutes to a task.</div>
+      <div class="timer" id="timerDisplay">25:00</div>
+      <div class="timer-grid"><button class="btn" onclick="startTimer()">Start</button><button class="btn secondary" onclick="pauseTimer()">Pause</button></div>
+      <div class="timer-grid"><button class="btn secondary" onclick="resetTimer()">Reset</button><button class="btn green" onclick="saveFocus()">Save Focus</button></div>
+      <label>Task ID (optional)</label><input id="focusTaskId" placeholder="TSK-..."><div id="timerMsg" class="msg"></div>
+    </div>
+  </section>
+
+  <section id="review" class="panel">
+    <div class="card"><b>🌙 Daily Review</b>
+      <label>Focus minutes</label><input id="reviewFocus" type="number" min="0">
+      <label>What went well?</label><textarea id="wentWell"></textarea>
+      <label>What did not get done?</label><textarea id="notDone"></textarea>
+      <label>Tomorrow #1 priority</label><input id="tomorrowOne">
+      <label>Notes</label><textarea id="reviewNotes"></textarea>
+      <button class="btn" onclick="saveReview()">Save Daily Review</button><div id="reviewMsg" class="msg"></div>
+    </div>
+  </section>
+
+<script>
+  let timerSeconds=25*60, timerInterval=null;
+  function tab(id,btn){document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));btn.classList.add('active');}
+  function msg(id,text,type){const el=document.getElementById(id);el.textContent=text;el.className='msg '+type;}
+  function dateToday(){const d=new Date();return d.toISOString().slice(0,10)}
+  document.getElementById('dueDate').value=dateToday();document.getElementById('expDate').value=dateToday();document.getElementById('incDate').value=dateToday();document.getElementById('goalDeadline').value=dateToday();
+  function saveTask(){
+    const data={task:taskName.value,type:taskType.value,priority:priority.value,project:project.value,dueDate:dueDate.value,startTime:startTime.value,endTime:endTime.value,estMinutes:estMinutes.value,impact:impact.value,urgency:urgency.value,revenue:revenue.value,notes:taskNotes.value,calendar:calendar.checked};
+    google.script.run.withSuccessHandler(id=>{msg('taskMsg','Saved: '+id,'ok');taskName.value='';taskNotes.value='';refreshToday()}).withFailureHandler(e=>msg('taskMsg',e.message,'err')).addTask(data);
+  }
+  function saveExpense(override){
+    const data={date:expDate.value,category:expCategory.value,amount:expAmount.value,description:expDescription.value,paymentMethod:payment.value,needWant:needWant.value,project:expProject.value,override:override};
+    google.script.run.withSuccessHandler(r=>{if(!r.ok&&r.warning){if(confirm(r.message+'\n\nOverride and save anyway?'))saveExpense(true);else msg('expMsg','Expense not saved. Budget protected.','warn');return;}msg('expMsg',r.message||'Expense saved.','ok');expAmount.value='';expDescription.value='';loadMoney()}).withFailureHandler(e=>msg('expMsg',e.message,'err')).addExpense(data);
+  }
+  function saveIncome(){const data={date:incDate.value,source:incSource.value,amount:incAmount.value,description:incDescription.value};google.script.run.withSuccessHandler(id=>{msg('incMsg','Saved: '+id,'ok');incAmount.value='';loadMoney()}).withFailureHandler(e=>msg('incMsg',e.message,'err')).addIncome(data)}
+  function saveGoal(){const data={goal:goalName.value,type:goalType.value,target:goalTarget.value,current:goalCurrent.value,unit:goalUnit.value,deadline:goalDeadline.value};google.script.run.withSuccessHandler(id=>msg('goalMsg','Goal saved: '+id,'ok')).withFailureHandler(e=>msg('goalMsg',e.message,'err')).addGoal(data)}
+  function saveMonthlyGoal(){const data={goal:mgoalName.value,target:mgoalTarget.value,current:mgoalCurrent.value,unit:mgoalUnit.value};google.script.run.withSuccessHandler(id=>msg('mgoalMsg','Monthly goal saved: '+id,'ok')).withFailureHandler(e=>msg('mgoalMsg',e.message,'err')).addMonthlyGoal(data)}
+  function refreshToday(){google.script.run.withSuccessHandler(d=>{document.getElementById('todaySummary').innerHTML='<div class="metric"><span>Big 3</span><b>'+d.big3.filter(x=>x.status==='Done').length+'/'+d.big3.length+'</b></div><div class="metric"><span>Today</span><b>'+d.done+'/'+d.totalToday+'</b></div><div class="metric"><span>Productivity</span><b>'+d.productivity+'%</b></div><div class="metric"><span>Budget left</span><b>'+d.remaining.toLocaleString()+' BDT</b></div>'}).getDashboardData()}
+  function loadMoney(){google.script.run.withSuccessHandler(d=>{document.getElementById('moneySummary').innerHTML='<div class="metric"><span>Budget</span><b>'+d.budget.toLocaleString()+' BDT</b></div><div class="metric"><span>Spent</span><b>'+d.spent.toLocaleString()+' BDT</b></div><div class="metric"><span>Remaining</span><b>'+d.remaining.toLocaleString()+' BDT</b></div><div class="metric"><span>Safe daily</span><b>'+d.safeDaily.toFixed(0)+' BDT</b></div><div class="metric"><span>Status</span><b>'+d.budgetHealth.label+'</b></div>'}).getDashboardData()}
+  function formatTimer(){const m=Math.floor(timerSeconds/60).toString().padStart(2,'0'),s=(timerSeconds%60).toString().padStart(2,'0');document.getElementById('timerDisplay').textContent=m+':'+s}
+  function startTimer(){if(timerInterval)return;timerInterval=setInterval(()=>{if(timerSeconds<=0){clearInterval(timerInterval);timerInterval=null;alert('Focus session complete!');return;}timerSeconds--;formatTimer()},1000)}
+  function pauseTimer(){clearInterval(timerInterval);timerInterval=null}
+  function resetTimer(){pauseTimer();timerSeconds=25*60;formatTimer()}
+  function saveFocus(){const minutes=Math.max(1,Math.round((25*60-timerSeconds)/60));google.script.run.withSuccessHandler(()=>msg('timerMsg','Saved '+minutes+' focus minute(s).','ok')).withFailureHandler(e=>msg('timerMsg',e.message,'err')).addFocusMinutes(focusTaskId.value,minutes)}
+  function saveReview(){const data={focusMinutes:reviewFocus.value,whatWentWell:wentWell.value,notDone:notDone.value,tomorrow:tomorrowOne.value,notes:reviewNotes.value};google.script.run.withSuccessHandler(()=>msg('reviewMsg','Daily review saved.','ok')).withFailureHandler(e=>msg('reviewMsg',e.message,'err')).submitDailyReview(data)}
+  refreshToday();loadMoney();
+</script>
+</body>
+</html>
